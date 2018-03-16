@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    Puzzle Size
+    <form method="post">
+        <input type="submit" value="Select size"></input>
+        <select name="size" id="size">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+        </select>
+    </form>
+    <h1>Puzzle</h1>
+    <table>
+        {% for y in range(size - 1) %}
+            <tr>
+                <td class="left" id ="{{ y }}-0"
+                    onclick="alert('{{y}} 0')"></td>
+
+                {% for x in range(size - 1) %}
+                    <td id ="{{ y }}-{{ x + 1 }}"
+                        onclick="alert('{{y}} {{x+1}}')"></td>
+
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        <tr>
+            <td class="left bottom" id ="{{ size-1 }}-0"
+                                    onclick="alert('{{size-1}} 0')"></td>
+
+            {% for x in range(size - 1) %}
+                <td class="bottom" id = "{{ size - 1 }}{{ x + 1 }}"
+                                   onclick="alert('{{size-1}} {{x+1}}')"></td>
+
+            {% endfor %}
+        </tr>
+    </table>
+    <form method="post">
+        <input type="submit" value="Select operator and total value"></input>
+        <select name="operator" id="operator">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="/">/</option>
+            <option value="*">*</option>
+            <option value="=">=</option>
+        </select>
+    </form>
+
+
+    <script type="text/javascript" src="cluster_data.js">
+
+    </script>
+
+    <!-- {{puzzle[0][0]}} -->
+    size = {{size}}
+
+{% endblock %}
