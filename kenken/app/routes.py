@@ -24,12 +24,11 @@ def index():
     #     }
     # ]
     size=6
-    operator = "+"
+    op = "+"
     size = int(request.form.get("size", size))
-    operator = request.form.get("operator") or operator
+    op = request.form.get("operator")
     puzzle = [[Cell(y, x) for x in range(size)] for y in range(size)]
-    return render_template('index.html', title='Home', operator=operator, size=size, puzzle=puzzle)
-    # return render_template('index.html', title='Home', user=user, operator=operator, size=size, puzzle=puzzle)
+    return render_template('index.html', title='Home', op=op, size=size, puzzle=puzzle)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
