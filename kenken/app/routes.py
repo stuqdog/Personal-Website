@@ -4,10 +4,11 @@ from app import app
 from flask import Flask, jsonify, render_template, flash, redirect, request, Response
 # from app.forms import LoginForm
 import json
-from solver import solve_puzzle
+import solver
 
-clusters = [0]
-puzzle_size = 0
+clusters = [0] # first element is # of blocks in clusters. when it equals the
+               # size of the puzzle in blocks, we've added every block.
+puzzle_size = 0 # size of the actual puzzle. We compare clusters[0] to this.
 
 
 class Cell():
@@ -21,12 +22,12 @@ class Cell():
 def worker():
     data = request.get_json()
     clusters.append(data)
-    clusters[0] += len(data["cells"])
+    clusters[0] = sum(len(clusters[x]['cells']) for x in range(1, len(clusters)))
     print(clusters[0], puzzle_size)
 
     ''' CHECK OUT THIS STUFF RIGHT HERE. YOU SHOULD do_something(clusters)'''
     if clusters[0] == puzzle_size:
-        solve_puzzle(clusters)
+        solver.solve_puzzle(clusters)
 
     print(data)
     return "A thing"
@@ -37,10 +38,12 @@ def worker():
 @app.route('/static')
 def index():
     global puzzle_size
+    global clusters
+    clusters = [0]
     size = int(request.form.get("size", 6))
     puzzle_size = size ** 2
     puzzle = [[Cell(y, x) for x in range(size)] for y in range(size)]
-    return render_template('index.html', title='Home', size=size)#, puzzle=puzzle) #op=op)
+    return render_template('index.html', title='Home', size=size)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
