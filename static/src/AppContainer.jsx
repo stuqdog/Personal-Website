@@ -16,15 +16,22 @@ class AppContainer extends Component {
     changeSize = (e) => {
         this.setState({
             size: e.target.value,
-        })
+        });
+        fetch('/static', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                size: e.target.value,
+            }),
+        }).catch(error => console.log("Error is: " + error))
     }
 
     addToCluster = (cell, y, x) => {
         let cluster = this.state.cluster;
         let selected = this.state.selected;
 
-        y = parseInt(y);
-        x = parseInt(x);
         if (cluster.length === 0) {
             cluster.add(y * 10 + x);
             selected.add(cell);
@@ -51,7 +58,7 @@ class AppContainer extends Component {
         const selectedArray = Array.from(this.state.selected);
         const sign = document.getElementById("op").value;
         const total = document.getElementById("num").valueAsNumber;
-        if (!sign || !total) {
+        if (!sign || !total || total < 0) {
             alert("Error. Invalid operator sign or total value.");
             return;
         }

@@ -3,9 +3,9 @@ import range from 'lodash/range';
 import './App.css';
 
 const Grid = (props) => {
-    const xGrid = range(props.size).map((item) => (
-            <td key={`x${item}`}></td>
-    ));
+    // const xGrid = range(props.size).map((item) => (
+    //         <td key={`x${item}`}></td>
+    // ));
 
     const yGrid = range(props.size).map((yItem) => (
         <tr key={yItem}>

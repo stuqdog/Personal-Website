@@ -35,12 +35,14 @@ def worker():
 @app.route('/', methods=['GET', 'POST'])
 
 @app.route('/index', methods=['GET', 'POST'])
-@app.route('/static')
+@app.route('/static', methods=['POST'])
 def index():
     global puzzle_size
     global clusters
     clusters = [0]
-    size = int(request.form.get("size", 6))
+    data = request.get_json()
+    print(data)
+    size = int(data["size"]) if data else 6
     puzzle_size = size ** 2
     puzzle = [[Cell(y, x) for x in range(size)] for y in range(size)]
     return render_template('index.html', title='Home', size=size)

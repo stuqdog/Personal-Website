@@ -4,7 +4,7 @@ import logo from './logo.svg';
 // Components
 import SizeUpdater from './SizeUpdater';
 import Grid from './Grid';
-import ClusterAssigner from './ClusterAssigner';
+import AssignToCluster from './AssignToCluster';
 import './App.css';
 
 
@@ -18,7 +18,7 @@ const App = props => (
             size={props.size}
             addToCluster={props.addToCluster}
         />
-        <ClusterAssigner
+        <AssignToCluster
             commitCluster={props.commitCluster}
         />
     </div>

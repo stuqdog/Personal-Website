@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-const ClusterAssigner = props => {
+const AssignToCluster = props => {
     return(
         <div>
             <input type="number" id="num"></input>
@@ -18,4 +18,4 @@ const ClusterAssigner = props => {
     )
 };
 
-export default ClusterAssigner;
+export default AssignToCluster;

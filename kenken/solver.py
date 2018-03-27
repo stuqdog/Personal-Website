@@ -144,7 +144,7 @@ def solve_puzzle(clusters):
         new_cluster = Cluster(cluster_size)
         for cell in cluster['cells']:
             x = cell % 10
-            y = (cell - x) // 10
+            y = cell // 10
             new_cell = Cell(y, x, new_cluster, possible, operator, value)
             new_cluster.cells.append(new_cell)
             solution.grid[y][x] = new_cell
