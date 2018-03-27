@@ -1,8 +1,3 @@
-'''to add: a method for reducing the possible set for items in a row/column where
-a confirmed cell exists. i.e., if a cell == 3, then no cell in the same row/column
-should have 3 in its possible set.'''
-
-
 class Cluster():
     def __init__(self, cluster_size):
         self.cells = []
@@ -25,8 +20,11 @@ class Solution():
         self.cells = []
         self.grid = [[0 for i in range(size)] for x in range(size)]
 
-    def solve(self):
+    def sort_cells(self):
         self.cells = sorted(self.cells, key=lambda x: len(x.possible))
+
+    def solve(self):
+        self.sort_cells()
         if self.can_be_solved():
             for row in self.grid:
                 for i, cell in enumerate(row):
@@ -40,35 +38,35 @@ class Solution():
         if i == self.size ** 2: # We've assigned to every cell at this point
             return True         # without any collision, so we're done!
         cell = self.cells[i]
-        if len(cell.possible) == 1:
-            cell.actual = sum(cell.possible)
+
+        if cell.operator == '=':
+            cell.actual = cell.possible.pop()
             return self.can_be_solved(i+1)
-        else:
-            for value in cell.possible:
-                cell.actual = value
-                if self.is_legal_state(cell):
-                    if self.can_be_solved(i+1):
-                        return True
-            cell.actual = None # No value for cell is valid given current board,
-                               # so we go back up the recursive stack
-            return False
+        for value in cell.possible:
+            cell.actual = value
+            if self.is_legal_state(cell):
+                if self.can_be_solved(i+1):
+                    return True
+        cell.actual = None # No value for cell is valid given current board,
+                           # so we go back up the recursive stack
+        return False
 
     def is_legal_state(self, cell):
         '''Checks if the current state is potentially legal by checking for
         value collisions by row/column, and checking that the cluster is still
         capable of being solved given current values. Return true if the
-        current state is potentially legal, false otherwise.'''
-        x, y = cell.x, cell.y
+        current state is potentially legal, otherwise false.'''
+        x, y, actual = cell.x, cell.y, cell.actual
         for row in range(self.size):
             if row == y:
                 continue
-            if self.grid[row][x].actual == cell.actual:
+            if self.grid[row][x].actual == actual:
                 return False
 
         for column in range(self.size):
             if column == x:
                 continue
-            if self.grid[y][column].actual == cell.actual:
+            if self.grid[y][column].actual == actual:
                 return False
 
         values = [c.actual for c in cell.cluster.cells if c.actual]
@@ -76,37 +74,29 @@ class Solution():
         unknown_cells = cell.cluster.cluster_size - len(values)
 
         if operator == '+':
-            if unknown_cells == 0:
-                if sum(values) != value:
-                    return False
+            if not unknown_cells:
+                return (sum(values) == value)
             diff = value - sum(values)
-            if diff < unknown_cells:
-                return False
-            elif diff > unknown_cells * self.size:
-                return False
+            return (diff >= unknown_cells and diff <= unknown_cells * self.size)
 
         elif operator == '-':
-            if unknown_cells == 0:
-                if abs(values[0] - values[1]) != value:
-                    return False
+            if not unknown_cells:
+                return (abs(values[0] - values[1]) == value)
 
         elif operator == '*':
             cur_val = 1
             for val in values:
                 cur_val *= val
-
-            if unknown_cells == 0:
-                if cur_val != value:
-                    return False
-
+            if not unknown_cells:
+                return (cur_val == value)
             if value % cur_val:
                 return False
 
         elif operator == '/':
-            if unknown_cells == 0:
+            if not unknown_cells:
                 denom, numer = sorted(values)
-                if numer // denom != value:
-                    return False
+                return (numer // denom == value)
+
         return True
 
 
@@ -165,6 +155,7 @@ def solve_puzzle(clusters):
 
 def main():
 
+      # an easy 4x4 puzzle
 #     puzzle = [
 #         16,
 #         {'cells': [[0, 0]], 'operator': '=', 'value': 3},
@@ -177,37 +168,77 @@ def main():
 #         {'cells': [[3, 0], [3, 1], [3, 2]], 'operator': '*', 'value': 24},
 #     ]
 #
+
+    # a moderately difficult 8x8
+    # puzzle = [
+    #     64,
+    #     {'cells': [0, 10], 'operator': '*', 'value': 28},
+    #     {'cells': [1, 2], 'operator': '*', 'value': 15},
+    #     {'cells': [3, 4], 'operator': '-', 'value': 5},
+    #     {'cells': [5, 6], 'operator': '+', 'value': 15},
+    #     {'cells': [7, 17], 'operator': '-', 'value': 2},
+    #     {'cells': [11, 12], 'operator': '+', 'value': 7},
+    #     {'cells': [13, 23], 'operator': '/', 'value': 2},
+    #     {'cells': [14, 24], 'operator': '-', 'value': 1},
+    #     {'cells': [15, 25], 'operator': '-', 'value': 5},
+    #     {'cells': [16, 26], 'operator': '/', 'value': 2},
+    #     {'cells': [20, 21, 22], 'operator': '+', 'value': 14},
+    #     {'cells': [27, 37], 'operator': '-', 'value': 2},
+    #     {'cells': [30, 40], 'operator': '+', 'value': 8},
+    #     {'cells': [31, 41], 'operator': '-', 'value': 2},
+    #     {'cells': [42, 32, 33], 'operator': '*', 'value': 392},
+    #     {'cells': [34, 44], 'operator': '/', 'value': 2},
+    #     {'cells': [35], 'operator': '=', 'value': 2},
+    #     {'cells': [36, 46], 'operator': '-', 'value': 2},
+    #     {'cells': [50, 60], 'operator': '-', 'value': 2},
+    #     {'cells': [51, 61], 'operator': '/', 'value': 4},
+    #     {'cells': [52, 62, 72], 'operator': '+', 'value': 12},
+    #     {'cells': [43, 53, 54], 'operator': '+', 'value': 9},
+    #     {'cells': [45, 55], 'operator': '+', 'value': 10},
+    #     {'cells': [47, 57], 'operator': '-', 'value': 7},
+    #     {'cells': [70, 71], 'operator': '/', 'value': 4},
+    #     {'cells': [63, 73], 'operator': '*', 'value': 6},
+    #     {'cells': [74, 64, 65], 'operator': '*', 'value': 56},
+    #     {'cells': [56, 66, 67], 'operator': '+', 'value': 18},
+    #     {'cells': [75, 76, 77], 'operator': '+', 'value': 15}
+    # ]
+
+    # a very difficult 9x9
     puzzle = [
-        64,
-        {'cells': [0, 10], 'operator': '*', 'value': 28},
-        {'cells': [1, 2], 'operator': '*', 'value': 15},
-        {'cells': [3, 4], 'operator': '-', 'value': 5},
-        {'cells': [5, 6], 'operator': '+', 'value': 15},
-        {'cells': [7, 17], 'operator': '-', 'value': 2},
-        {'cells': [11, 12], 'operator': '+', 'value': 7},
-        {'cells': [13, 23], 'operator': '/', 'value': 2},
-        {'cells': [14, 24], 'operator': '-', 'value': 1},
-        {'cells': [15, 25], 'operator': '-', 'value': 5},
-        {'cells': [16, 26], 'operator': '/', 'value': 2},
-        {'cells': [20, 21, 22], 'operator': '+', 'value': 14},
-        {'cells': [27, 37], 'operator': '-', 'value': 2},
-        {'cells': [30, 40], 'operator': '+', 'value': 8},
-        {'cells': [31, 41], 'operator': '-', 'value': 2},
-        {'cells': [42, 32, 33], 'operator': '*', 'value': 392},
-        {'cells': [34, 44], 'operator': '/', 'value': 2},
-        {'cells': [35], 'operator': '=', 'value': 2},
-        {'cells': [36, 46], 'operator': '-', 'value': 2},
-        {'cells': [50, 60], 'operator': '-', 'value': 2},
-        {'cells': [51, 61], 'operator': '/', 'value': 4},
-        {'cells': [52, 62, 72], 'operator': '+', 'value': 12},
-        {'cells': [43, 53, 54], 'operator': '+', 'value': 9},
-        {'cells': [45, 55], 'operator': '+', 'value': 10},
-        {'cells': [47, 57], 'operator': '-', 'value': 7},
-        {'cells': [70, 71], 'operator': '/', 'value': 4},
-        {'cells': [63, 73], 'operator': '*', 'value': 6},
-        {'cells': [74, 64, 65], 'operator': '*', 'value': 56},
-        {'cells': [56, 66, 67], 'operator': '+', 'value': 18},
-        {'cells': [75, 76, 77], 'operator': '+', 'value': 15}
+    81,
+    {'cells': [0, 1, 2, 10, 20], 'operator': '+', 'value': 21},
+    {'cells': [3, 4, 5, 14], 'operator': '*', 'value': 60},
+    {'cells': [6, 7, 8, 18, 28], 'operator': '+', 'value': 25},
+    {'cells': [11, 12], 'operator': '-', 'value': 6},
+    {'cells': [13, 23], 'operator': '+', 'value': 11},
+    {'cells': [15, 25], 'operator': '-', 'value': 4},
+    {'cells': [16, 17], 'operator': '+', 'value': 13},
+    {'cells': [21, 31], 'operator': '+', 'value': 8},
+    {'cells': [22], 'operator': '=', 'value': 8},
+    {'cells': [24], 'operator': '=', 'value': 2},
+    {'cells': [26], 'operator': '=', 'value': 9},
+    {'cells': [27, 37], 'operator': '+', 'value': 11},
+    {'cells': [30, 40, 41, 50], 'operator': '+', 'value': 24},
+    {'cells': [32, 33], 'operator': '+', 'value': 13},
+    {'cells': [34, 43, 44, 45, 54], 'operator': '+', 'value': 25},
+    {'cells': [35, 36], 'operator': '-', 'value': 3},
+    {'cells': [38, 47, 48, 58], 'operator': '+', 'value': 17},
+    {'cells': [42], 'operator': '=', 'value': 2},
+    {'cells': [46], 'operator': '=', 'value': 3},
+    {'cells': [51, 61], 'operator': '-', 'value': 1},
+    {'cells': [52, 53], 'operator': '+', 'value': 13},
+    {'cells': [55, 56], 'operator': '-', 'value': 1},
+    {'cells': [57, 67], 'operator': '+', 'value': 11},
+    {'cells': [60, 70, 80, 81, 82], 'operator': '+', 'value': 26},
+    {'cells': [62], 'operator': '=', 'value': 1},
+    {'cells': [63, 73], 'operator': '*', 'value': 16},
+    {'cells': [64], 'operator': '=', 'value': 6},
+    {'cells': [65, 75], 'operator': '+', 'value': 12},
+    {'cells': [66], 'operator': '=', 'value': 7},
+    {'cells': [68, 78, 86, 87, 88], 'operator': '+', 'value': 25},
+    {'cells': [71, 72], 'operator': '-', 'value': 1},
+    {'cells': [74, 83, 84, 85], 'operator': '*', 'value': 378},
+    {'cells': [76, 77], 'operator': '*', 'value': 3}
     ]
 
     solve_puzzle(puzzle)
