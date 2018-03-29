@@ -5,7 +5,7 @@ const SizeUpdater = props => (
     <div>
         Puzzle Size <br />
         <select name="size" id="size"
-            onChange={(e) => props.changeSize(e) }
+            onChange={(e) => props.updateGrid(e) }
             value={props.size}
         >
             <option value="3">3</option>

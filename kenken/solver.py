@@ -33,6 +33,7 @@ class Solution():
             return self.grid
         else:
             print("No valid solution could be found!")
+            return 1
 
     def can_be_solved(self, i=0):
         if i == self.size ** 2: # We've assigned to every cell at this point
@@ -150,7 +151,7 @@ def solve_puzzle(clusters):
             solution.grid[y][x] = new_cell
             solution.cells.append(new_cell)
         solution.clusters.append(new_cluster)
-    solution.solve()
+    return solution.solve()
 
 
 def main():

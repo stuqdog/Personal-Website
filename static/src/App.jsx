@@ -12,7 +12,7 @@ const App = props => (
     <div>
         <SizeUpdater
             size={props.size}
-            changeSize={props.changeSize}
+            updateGrid={props.updateGrid}
             />
         <Grid
             size={props.size}
