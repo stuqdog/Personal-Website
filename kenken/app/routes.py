@@ -15,11 +15,11 @@ import solver
  we're storing in clusters.'''
 clusters = [0]
 puzzle_size = 0 # size of the actual puzzle. We compare clusters[0] to this.
-solution = 10
 
 
 @app.route('/receiver', methods=['POST'])
 def worker():
+    global solution
     data = request.get_json()
     clusters.append(data)
     print(clusters)
@@ -27,8 +27,10 @@ def worker():
 
     if clusters[0] == puzzle_size:
         solution = solver.solve_puzzle(clusters)
-
-    return json.dumps('[test]') #json.dumps(["test"]) #json.dumps(["A thing"])
+    else:
+        solution = []
+    print(solution)
+    return json.dumps(str(solution)) #json.dumps(["test"]) #json.dumps(["A thing"])
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -40,7 +42,7 @@ def index():
     data = request.get_json()
     size = int(data["size"]) if data else 6
     puzzle_size = size ** 2
-    return render_template('index.html', title='Home', solution=solution)
+    return render_template('index.html', title='Home')
 
 # @app.route('/login', methods=['GET', 'POST'])
 # def login():

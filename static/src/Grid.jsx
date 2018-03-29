@@ -8,7 +8,7 @@ const Grid = (props) => {
         <tr key={yItem}>
             {
                 range(props.size).map((xItem) => (
-                    <td key={`${yItem}${xItem}`} className="default"
+                    <td key={`${yItem}${xItem}`} className="default" id={`${yItem}${xItem}`}
                         onClick={(e) => props.addToCluster(e.target, yItem, xItem)}>
                         ?
                     </td>

@@ -9,7 +9,6 @@ class AppContainer extends Component {
             cluster: new Set(),
             clusters: [],
             selected: new Set(),
-            solution: [],
         };
     }
 
@@ -54,10 +53,6 @@ class AppContainer extends Component {
     }
 
     updateGrid = (e) => {
-        if (this.state.solution.length === 1) {
-            alert("Puzzle has no solution.");
-            return;
-        }
         let selected = this.state.selected;
         let clusters = this.state.clusters;
         for (let i = 0; i < clusters.length; ++i) {
@@ -66,9 +61,7 @@ class AppContainer extends Component {
                 cell.classList.remove("committed");
                 cell.classList.remove("selected");
                 cell.classList.add("default");
-                if (this.state.solution.length >= 3) {
-                    cell.innerHTML = this.state.solution[i][j];
-                }
+                cell.innerHTML = ' ?';
             }
         }
         selected.forEach(function(cell) {
@@ -125,6 +118,26 @@ class AppContainer extends Component {
         });
     }
 
+    displaySolution = (solution) => {
+        alert("You are here");
+        if (solution.length === 0) {
+            return;
+        } else if (solution.length === 1) {
+            alert("Puzzle could not be solved!");
+            return;
+        } else {
+            for (let i = 0; i < this.state.clusters.length; ++i) {
+                for (let j = 0; j < this.state.clusters[i].length; ++j) {
+                    let cell = this.state.clusters[i][j];
+                    let cellID = parseInt(cell.id);
+                    let x = cellID % 10;
+                    let y = (cellID - x) / 10;
+                    cell.innerHTML = ' ' + solution[y][x];
+                }
+            }
+        }
+    }
+
     commitCluster = (e) => {
         // Let's add some logic in here to confirm that clusters are legal!
         if (!this.isLegalCluster(this.state.cluster)) {
@@ -141,6 +154,7 @@ class AppContainer extends Component {
         if (!this.isLegalOperatorAndTotal(op, total, clusterArray)) {
             return;
         }
+
         for (let i = 0; i < selectedArray.length; i++) {
             let coordinates = clusterArray[i];
 
@@ -179,10 +193,8 @@ class AppContainer extends Component {
         ).catch(error => console.log("Error is: " + error)
         ).then(solution => {
             return solution.json();
-        }).then(function(solution) {
-            solution = JSON
-            console.log(solution);
-            console.log(solution.length);
+        }).then(solution => {
+            solution = JSON.parse(solution);
             if (solution.length > 0) {
                 this.displaySolution(solution);
             }
@@ -193,19 +205,6 @@ class AppContainer extends Component {
             cluster: new Set(),
             selected: new Set(),
         })
-    }
-
-    displaySolution = (solution) => {
-        alert("You are here");
-        return;
-        if (solution.length === 0) {
-            return;
-        } else if (solution.length === 1) {
-            alert("Puzzle could not be solved!");
-            return;
-        } else {
-
-        }
     }
 
 
