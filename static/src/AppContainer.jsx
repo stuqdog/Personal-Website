@@ -6,16 +6,22 @@ class AppContainer extends Component {
         super(props);
         this.state = {
             size : 6,
-            cluster: new Set(),
+            clusterCoordinates: new Set(),
             clusters: [],
-            selected: new Set(),
+            clusterCells: new Set(),
         };
     }
 
+    solvePuzzle = () => {
+        console.log("You're in solvePuzzle!");
+        return;
+    }
+
     isLegalCluster = (cluster) => {
+        /* Before we commit a cluster, we need to confirm that it's legal
+        (all cells connected, two cells for div/sub, one cell for ==, etc.) */
         let size = cluster.length;
-        let start = cluster.keys().next().value; // Not very elegant, but we need a starting
-        //cluster.add(start);        // value from the set.
+        let start = cluster.keys().next().value; // There has to be a better way than this.
         let check_connectivity = new Set();
         let check_array = [start];
         while (check_array.length > 0) {
@@ -53,28 +59,27 @@ class AppContainer extends Component {
     }
 
     updateGrid = (e) => {
-        let selected = this.state.selected;
+        let clusterCells = this.state.clusterCells;
         let clusters = this.state.clusters;
         for (let i = 0; i < clusters.length; ++i) {
             for (let j = 0; j < clusters[i].length; ++j) {
                 let cell = clusters[i][j];
-                cell.classList.remove("committed");
-                cell.classList.remove("selected");
+                cell.className = "";
                 cell.classList.add("default");
                 cell.innerHTML = ' ?';
             }
         }
-        selected.forEach(function(cell) {
+        clusterCells.forEach(function(cell) {
             cell.classList.remove("selected");
             cell.classList.add("default");
-            selected.delete(cell);
+            clusterCells.delete(cell);
         });
 
         this.setState({
             size: e.target.value,
             cluster: new Set(),
             clusters: [],
-            selected: new Set(),
+            clusterCells: new Set(),
             solved: false,
         });
         fetch('/static', {
@@ -95,41 +100,40 @@ class AppContainer extends Component {
             alert("This cell is already committed, sorry!");
             return;
         }
-        let cluster = this.state.cluster;
-        let selected = this.state.selected;
+        let cluster = this.state.clusterCoordinates;
+        let clusterCells = this.state.clusterCells;
 
         if (cluster.length === 0) {
             cluster.add(y * 10 + x);
-            selected.add(cell);
+            clusterCells.add(cell);
         }
         cell.classList.toggle("selected");
         cell.classList.toggle("default");
         if (cluster.has(y * 10 + x)) {
             cluster.delete(y * 10 + x);
-            selected.delete(cell);
+            clusterCells.delete(cell);
         } else {
             cluster.add(y * 10 + x);
-            selected.add(cell);
+            clusterCells.add(cell);
         }
 
         this.setState({
             cluster, // alternatively: key: value
-            selected,
+            clusterCells,
         });
     }
 
     displaySolution = (solution) => {
-        alert("You are here");
         if (solution.length === 0) {
             return;
         } else if (solution.length === 1) {
-            alert("Puzzle could not be solved!");
+            alert("Puzzle has no valid solution.");
             return;
         } else {
             for (let i = 0; i < this.state.clusters.length; ++i) {
                 for (let j = 0; j < this.state.clusters[i].length; ++j) {
                     let cell = this.state.clusters[i][j];
-                    let cellID = parseInt(cell.id);
+                    let cellID = parseInt(cell.id, 10);
                     let x = cellID % 10;
                     let y = (cellID - x) / 10;
                     cell.innerHTML = ' ' + solution[y][x];
@@ -140,14 +144,14 @@ class AppContainer extends Component {
 
     commitCluster = (e) => {
         // Let's add some logic in here to confirm that clusters are legal!
-        if (!this.isLegalCluster(this.state.cluster)) {
+        if (!this.isLegalCluster(this.state.clusterCoordinates)) {
             alert("Error. Cluster cells must be connected.");
             return;
         }
         e.preventDefault();
         e.stopPropagation();
-        const clusterArray = Array.from(this.state.cluster);
-        const selectedArray = Array.from(this.state.selected);
+        const clusterArray = Array.from(this.state.clusterCoordinates);
+        const selectedArray = Array.from(this.state.clusterCells);
         const op = document.getElementById("op").value;
         const total = document.getElementById("num").valueAsNumber;
 
@@ -158,16 +162,16 @@ class AppContainer extends Component {
         for (let i = 0; i < selectedArray.length; i++) {
             let coordinates = clusterArray[i];
 
-            if (!this.state.cluster.has(coordinates+10)) {
+            if (!this.state.clusterCoordinates.has(coordinates+10)) {
                 selectedArray[i].classList.add("bottom_border");
             }
-            if (!this.state.cluster.has(coordinates-10)) {
+            if (!this.state.clusterCoordinates.has(coordinates-10)) {
                 selectedArray[i].classList.add("top_border");
             }
-            if (!this.state.cluster.has(coordinates+1)) {
+            if (!this.state.clusterCoordinates.has(coordinates+1)) {
                 selectedArray[i].classList.add("right_border");
             }
-            if (!this.state.cluster.has(coordinates-1)) {
+            if (!this.state.clusterCoordinates.has(coordinates-1)) {
                 selectedArray[i].classList.add("left_border");
             }
 
@@ -203,7 +207,7 @@ class AppContainer extends Component {
         this.state.clusters.push(selectedArray);
         this.setState({
             cluster: new Set(),
-            selected: new Set(),
+            clusterCells: new Set(),
         })
     }
 
@@ -215,6 +219,7 @@ class AppContainer extends Component {
                 updateGrid={this.updateGrid}
                 addToCluster={this.addToCluster}
                 commitCluster={this.commitCluster}
+                submitPuzzle={this.submitPuzzle}
             />
         )
     }
