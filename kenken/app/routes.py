@@ -19,16 +19,21 @@ puzzle_size = 0 # size of the actual puzzle. We compare clusters[0] to this.
 
 @app.route('/receiver', methods=['POST'])
 def worker():
-    global solution
+    # global solution
     data = request.get_json()
     clusters.append(data)
     print(clusters)
     clusters[0] = sum(len(clusters[x]['cells']) for x in range(1, len(clusters)))
 
-    if clusters[0] == puzzle_size:
-        solution = solver.solve_puzzle(clusters)
-    else:
-        solution = []
+    # if clusters[0] == puzzle_size:
+    #     solution = solver.solve_puzzle(clusters)
+    # else:
+    #     solution = []
+    # return json.dumps(str(solution))
+
+@app.route('/solver', methods['POST'])
+def solver():
+    solution = solver.solve_puzzle(clusters)
     return json.dumps(str(solution))
 
 @app.route('/', methods=['GET', 'POST'])

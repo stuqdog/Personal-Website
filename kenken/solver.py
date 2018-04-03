@@ -139,8 +139,12 @@ def solve_puzzle(clusters):
     for i, cluster in enumerate(clusters):
         if i == 0: # First value of clusters is puzzle size, not an actual cluster
             continue # we can probably fix that, though.
-        cluster_size, operator, value = (
-            len(cluster['cells']), cluster['operator'], cluster['value'])
+        cluster_size = len(cluster['cells'])
+        if "opAndTotal" in cluster:
+            operator = cluster['opAndTotal'][0]
+            value = int(cluster['opAndTotal'][1:])
+        else:
+            operator, value = (cluster['operator'], cluster['value'])
         possible = find_possible(size, cluster_size, operator, value)
         new_cluster = Cluster(cluster_size)
         for cell in cluster['cells']:

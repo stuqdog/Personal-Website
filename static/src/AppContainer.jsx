@@ -6,6 +6,7 @@ to solve. If we are, then we'll pass the data to python.
 2) Related, sorta: Add ways for people to fix clusters that they misassigned.
 How do we want to do this? Maybe have each cell have a pointer to the cluster
 that it belongs to? Hmm. Gotta think about that.
+3) How do we add clusters? At what point do we add op and total to the array? Maybe as a dict?
 */
 
 
@@ -38,15 +39,16 @@ class AppContainer extends Component {
         const jsonPuzzle = clusters.map(cluster => cluster.map(cell => parseInt(cell.id, 10)));
         const op = document.getElementById("op").value;
         const total = document.getElementById("num").valueAsNumber;
-        // for (let i = 0; i < clusters.length; ++i) {
-        //     let newCluster = [];
-        //     for (let j = 0; j < clusters[i].length; ++j) {
-        //         let cell = clusters[i][j];
-        //         let cellID = parseInt(cell.id, 10);
-        //         newCluster.push(cellID);
-        //     }
-        // }
         console.log(jsonPuzzle);
+        fetch('/static', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                size: e.target.value,
+            }),
+        }).catch(error => console.log("Error is: " + error))
         return;
     }
 
@@ -171,7 +173,7 @@ class AppContainer extends Component {
                     let cellID = parseInt(cell.id, 10);
                     let x = cellID % 10;
                     let y = (cellID - x) / 10;
-                    cell.innerHTML = ' ' + solution[y][x];
+                    cell.innerHTML = solution[y][x];
                 }
             }
         }
@@ -233,9 +235,10 @@ class AppContainer extends Component {
         ).then(solution => {
             return solution.json();
         }).then(solution => {
-            solution = JSON.parse(solution);
-            if (solution.length > 0) {
-                this.displaySolution(solution);
+            let jsonSolution = JSON.parse(solution);
+            console.log(jsonSolution);
+            if (jsonSsolution.length > 0) {
+                this.displaySolution(jsonSolution);
             }
         });
 
