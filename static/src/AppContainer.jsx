@@ -1,3 +1,14 @@
+/* General thoughts:
+1) No need to pass anything to Python until we're ready to solve. Keep track of
+size and confirming that we're ready to solve on the js side, and then when
+someone says "Hey, solve the puzzle" then js will check that we're in a position
+to solve. If we are, then we'll pass the data to python.
+2) Related, sorta: Add ways for people to fix clusters that they misassigned.
+How do we want to do this? Maybe have each cell have a pointer to the cluster
+that it belongs to? Hmm. Gotta think about that.
+*/
+
+
 import React, { Component } from 'react';
 import App from './App';
 
@@ -13,14 +24,35 @@ class AppContainer extends Component {
     }
 
     solvePuzzle = () => {
+        let committedCells = 0;
+        let clusters = this.state.clusters;
+        for (let i = 0; i < clusters.length; ++i) {
+            committedCells += clusters[i].length;
+        }
+        if (committedCells !== Math.pow(this.state.size, 2)) {
+            alert("Cannot solve a puzzle unless all cells have been declared.");
+            return;
+        }
+        alert(committedCells);
         console.log("You're in solvePuzzle!");
+        const jsonPuzzle = clusters.map(cluster => cluster.map(cell => parseInt(cell.id, 10)));
+        const op = document.getElementById("op").value;
+        const total = document.getElementById("num").valueAsNumber;
+        // for (let i = 0; i < clusters.length; ++i) {
+        //     let newCluster = [];
+        //     for (let j = 0; j < clusters[i].length; ++j) {
+        //         let cell = clusters[i][j];
+        //         let cellID = parseInt(cell.id, 10);
+        //         newCluster.push(cellID);
+        //     }
+        // }
+        console.log(jsonPuzzle);
         return;
     }
 
     isLegalCluster = (cluster) => {
         /* Before we commit a cluster, we need to confirm that it's legal
         (all cells connected, two cells for div/sub, one cell for ==, etc.) */
-        let size = cluster.length;
         let start = cluster.keys().next().value; // There has to be a better way than this.
         let check_connectivity = new Set();
         let check_array = [start];
@@ -43,6 +75,9 @@ class AppContainer extends Component {
     isLegalOperatorAndTotal = (op, total, clusterArray) =>  {
         if (!op || !total || total < 0) {
             alert("Error. Invalid operator sign or total value.");
+            return false;
+        } else if (total % 1 !== 0) {
+            alert("Hey! whole numbers only >:(");
             return false;
         } else if ((op === '/' || op === '-') && clusterArray.length !== 2) {
             alert("Error. Division and subtraction require exactly two cells.");
@@ -77,7 +112,7 @@ class AppContainer extends Component {
 
         this.setState({
             size: e.target.value,
-            cluster: new Set(),
+            clusterCoordinates: new Set(),
             clusters: [],
             clusterCells: new Set(),
             solved: false,
@@ -151,7 +186,7 @@ class AppContainer extends Component {
         e.preventDefault();
         e.stopPropagation();
         const clusterArray = Array.from(this.state.clusterCoordinates);
-        const selectedArray = Array.from(this.state.clusterCells);
+        let selectedArray = Array.from(this.state.clusterCells);
         const op = document.getElementById("op").value;
         const total = document.getElementById("num").valueAsNumber;
 
@@ -206,7 +241,7 @@ class AppContainer extends Component {
 
         this.state.clusters.push(selectedArray);
         this.setState({
-            cluster: new Set(),
+            clusterCoordinates: new Set(),
             clusterCells: new Set(),
         })
     }
@@ -219,7 +254,7 @@ class AppContainer extends Component {
                 updateGrid={this.updateGrid}
                 addToCluster={this.addToCluster}
                 commitCluster={this.commitCluster}
-                submitPuzzle={this.submitPuzzle}
+                solvePuzzle={this.solvePuzzle}
             />
         )
     }

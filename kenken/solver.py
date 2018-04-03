@@ -157,55 +157,55 @@ def solve_puzzle(clusters):
 def main():
 
       # an easy 4x4 puzzle
-#     puzzle = [
-#         16,
-#         {'cells': [[0, 0]], 'operator': '=', 'value': 3},
-#         {'cells': [[1, 0], [2, 0]], 'operator': '+', 'value': 3},
-#         {'cells': [[0, 1], [0, 2]], 'operator': '-', 'value': 3},
-#         {'cells': [[0, 3], [1, 3]], 'operator': '/', 'value': 2},
-#         {'cells': [[1, 1], [1, 2], [2, 1]], 'operator': '*', 'value': 12},
-#         {'cells': [[2, 2], [2, 3]], 'operator': '-', 'value': 1},
-#         {'cells': [[3, 3]], 'operator': '=', 'value': 1},
-#         {'cells': [[3, 0], [3, 1], [3, 2]], 'operator': '*', 'value': 24},
-#     ]
-#
+    puzzle_easy = [
+        16,
+        {'cells': [[0, 0]], 'operator': '=', 'value': 3},
+        {'cells': [[1, 0], [2, 0]], 'operator': '+', 'value': 3},
+        {'cells': [[0, 1], [0, 2]], 'operator': '-', 'value': 3},
+        {'cells': [[0, 3], [1, 3]], 'operator': '/', 'value': 2},
+        {'cells': [[1, 1], [1, 2], [2, 1]], 'operator': '*', 'value': 12},
+        {'cells': [[2, 2], [2, 3]], 'operator': '-', 'value': 1},
+        {'cells': [[3, 3]], 'operator': '=', 'value': 1},
+        {'cells': [[3, 0], [3, 1], [3, 2]], 'operator': '*', 'value': 24},
+    ]
+
 
     # a moderately difficult 8x8
-    # puzzle = [
-    #     64,
-    #     {'cells': [0, 10], 'operator': '*', 'value': 28},
-    #     {'cells': [1, 2], 'operator': '*', 'value': 15},
-    #     {'cells': [3, 4], 'operator': '-', 'value': 5},
-    #     {'cells': [5, 6], 'operator': '+', 'value': 15},
-    #     {'cells': [7, 17], 'operator': '-', 'value': 2},
-    #     {'cells': [11, 12], 'operator': '+', 'value': 7},
-    #     {'cells': [13, 23], 'operator': '/', 'value': 2},
-    #     {'cells': [14, 24], 'operator': '-', 'value': 1},
-    #     {'cells': [15, 25], 'operator': '-', 'value': 5},
-    #     {'cells': [16, 26], 'operator': '/', 'value': 2},
-    #     {'cells': [20, 21, 22], 'operator': '+', 'value': 14},
-    #     {'cells': [27, 37], 'operator': '-', 'value': 2},
-    #     {'cells': [30, 40], 'operator': '+', 'value': 8},
-    #     {'cells': [31, 41], 'operator': '-', 'value': 2},
-    #     {'cells': [42, 32, 33], 'operator': '*', 'value': 392},
-    #     {'cells': [34, 44], 'operator': '/', 'value': 2},
-    #     {'cells': [35], 'operator': '=', 'value': 2},
-    #     {'cells': [36, 46], 'operator': '-', 'value': 2},
-    #     {'cells': [50, 60], 'operator': '-', 'value': 2},
-    #     {'cells': [51, 61], 'operator': '/', 'value': 4},
-    #     {'cells': [52, 62, 72], 'operator': '+', 'value': 12},
-    #     {'cells': [43, 53, 54], 'operator': '+', 'value': 9},
-    #     {'cells': [45, 55], 'operator': '+', 'value': 10},
-    #     {'cells': [47, 57], 'operator': '-', 'value': 7},
-    #     {'cells': [70, 71], 'operator': '/', 'value': 4},
-    #     {'cells': [63, 73], 'operator': '*', 'value': 6},
-    #     {'cells': [74, 64, 65], 'operator': '*', 'value': 56},
-    #     {'cells': [56, 66, 67], 'operator': '+', 'value': 18},
-    #     {'cells': [75, 76, 77], 'operator': '+', 'value': 15}
-    # ]
+    puzzle_medium = [
+        64,
+        {'cells': [0, 10], 'operator': '*', 'value': 28},
+        {'cells': [1, 2], 'operator': '*', 'value': 15},
+        {'cells': [3, 4], 'operator': '-', 'value': 5},
+        {'cells': [5, 6], 'operator': '+', 'value': 15},
+        {'cells': [7, 17], 'operator': '-', 'value': 2},
+        {'cells': [11, 12], 'operator': '+', 'value': 7},
+        {'cells': [13, 23], 'operator': '/', 'value': 2},
+        {'cells': [14, 24], 'operator': '-', 'value': 1},
+        {'cells': [15, 25], 'operator': '-', 'value': 5},
+        {'cells': [16, 26], 'operator': '/', 'value': 2},
+        {'cells': [20, 21, 22], 'operator': '+', 'value': 14},
+        {'cells': [27, 37], 'operator': '-', 'value': 2},
+        {'cells': [30, 40], 'operator': '+', 'value': 8},
+        {'cells': [31, 41], 'operator': '-', 'value': 2},
+        {'cells': [42, 32, 33], 'operator': '*', 'value': 392},
+        {'cells': [34, 44], 'operator': '/', 'value': 2},
+        {'cells': [35], 'operator': '=', 'value': 2},
+        {'cells': [36, 46], 'operator': '-', 'value': 2},
+        {'cells': [50, 60], 'operator': '-', 'value': 2},
+        {'cells': [51, 61], 'operator': '/', 'value': 4},
+        {'cells': [52, 62, 72], 'operator': '+', 'value': 12},
+        {'cells': [43, 53, 54], 'operator': '+', 'value': 9},
+        {'cells': [45, 55], 'operator': '+', 'value': 10},
+        {'cells': [47, 57], 'operator': '-', 'value': 7},
+        {'cells': [70, 71], 'operator': '/', 'value': 4},
+        {'cells': [63, 73], 'operator': '*', 'value': 6},
+        {'cells': [74, 64, 65], 'operator': '*', 'value': 56},
+        {'cells': [56, 66, 67], 'operator': '+', 'value': 18},
+        {'cells': [75, 76, 77], 'operator': '+', 'value': 15}
+    ]
 
     # a very difficult 9x9
-    puzzle = [
+    puzzle_hard = [
     81,
     {'cells': [0, 1, 2, 10, 20], 'operator': '+', 'value': 21},
     {'cells': [3, 4, 5, 14], 'operator': '*', 'value': 60},
@@ -242,7 +242,9 @@ def main():
     {'cells': [76, 77], 'operator': '*', 'value': 3}
     ]
 
-    solve_puzzle(puzzle)
+    # solve_puzzle(puzzle_easy)
+    # solve_puzzle(puzzle_medium)
+    solve_puzzle(puzzle_hard)
 
 if __name__ == "__main__":
     main()

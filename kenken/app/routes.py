@@ -29,8 +29,7 @@ def worker():
         solution = solver.solve_puzzle(clusters)
     else:
         solution = []
-    print(solution)
-    return json.dumps(str(solution)) #json.dumps(["test"]) #json.dumps(["A thing"])
+    return json.dumps(str(solution))
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])

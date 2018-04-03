@@ -5,7 +5,7 @@ import logo from './logo.svg';
 import SizeUpdater from './SizeUpdater';
 import Grid from './Grid';
 import AssignToCluster from './AssignToCluster';
-import submitPuzzle from './submitPuzzle';
+import SubmitPuzzle from './SubmitPuzzle';
 import './App.css';
 
 
@@ -19,7 +19,7 @@ const App = props => (
             size={props.size}
             addToCluster={props.addToCluster}
         />
-        <submitPuzzle
+        <SubmitPuzzle
             solvePuzzle={props.solvePuzzle}
             />
         <AssignToCluster
