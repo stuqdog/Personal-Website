@@ -34,21 +34,26 @@ class AppContainer extends Component {
             alert("Cannot solve a puzzle unless all cells have been declared.");
             return;
         }
-        alert(committedCells);
-        console.log("You're in solvePuzzle!");
         const jsonPuzzle = clusters.map(cluster => cluster.map(cell => parseInt(cell.id, 10)));
         const op = document.getElementById("op").value;
         const total = document.getElementById("num").valueAsNumber;
-        console.log(jsonPuzzle);
-        fetch('/static', {
+        fetch('/solver', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
             },
-            body: JSON.stringify({
-                size: e.target.value,
-            }),
-        }).catch(error => console.log("Error is: " + error))
+            // body: JSON.stringify({
+            //     size: e.target.value,
+            // }),
+        }).catch(error => console.log("Error is: " + error)
+        ).then(solution => {
+            return solution.json();
+        }).then(solution => {
+            let jsonSolution = JSON.parse(solution);
+            if (jsonSolution.length > 0) {
+                this.displaySolution(jsonSolution);
+            }
+        });
         return;
     }
 
@@ -231,17 +236,7 @@ class AppContainer extends Component {
                     value: total,
                 }),
             }
-        ).catch(error => console.log("Error is: " + error)
-        ).then(solution => {
-            return solution.json();
-        }).then(solution => {
-            let jsonSolution = JSON.parse(solution);
-            console.log(jsonSolution);
-            if (jsonSsolution.length > 0) {
-                this.displaySolution(jsonSolution);
-            }
-        });
-
+        ).catch(error => console.log("Error is: " + error));
         this.state.clusters.push(selectedArray);
         this.setState({
             clusterCoordinates: new Set(),

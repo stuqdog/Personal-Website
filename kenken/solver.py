@@ -33,7 +33,7 @@ class Solution():
             return self.grid
         else:
             print("No valid solution could be found!")
-            return [1]
+            return []
 
     def can_be_solved(self, i=0):
         if i == self.size ** 2: # We've assigned to every cell at this point
@@ -134,17 +134,12 @@ def solve_puzzle(clusters):
     '''This initializes everything. Creates classes out of the raw data we
     receive, then calls the methods that will actually solve the puzzle.
     '''
-    size = int(clusters[0] ** .5)
+    size = sum(len(cluster['cells']) for cluster in clusters)
+    size = int(size ** 0.5)
     solution = Solution(size)
     for i, cluster in enumerate(clusters):
-        if i == 0: # First value of clusters is puzzle size, not an actual cluster
-            continue # we can probably fix that, though.
-        cluster_size = len(cluster['cells'])
-        if "opAndTotal" in cluster:
-            operator = cluster['opAndTotal'][0]
-            value = int(cluster['opAndTotal'][1:])
-        else:
-            operator, value = (cluster['operator'], cluster['value'])
+        cluster_size, operator, value = (
+              len(cluster['cells']), cluster['operator'], cluster['value'])
         possible = find_possible(size, cluster_size, operator, value)
         new_cluster = Cluster(cluster_size)
         for cell in cluster['cells']:
