@@ -6,6 +6,9 @@ to solve. If we are, then we'll pass the data to python.
 2) Related, sorta: Add ways for people to fix clusters that they misassigned.
 How do we want to do this? Maybe have each cell have a pointer to the cluster
 that it belongs to? Hmm. Gotta think about that.
+2a) there's an asymptotically kind of slow way. When we click one that already exists, we
+search clusters and find that cluster, and erase it. It's O(n), where n is the number of currently
+committed cells. But like, (n) will never be bigger than 81 so it's pretty tightly bound.
 3) How do we add clusters? At what point do we add op and total to the array? Maybe as a dict?
 */
 
