@@ -45,17 +45,12 @@ class AppContainer extends Component {
             headers: {
                 'content-type': 'application/json',
             },
-            // body: JSON.stringify({
-            //     size: e.target.value,
-            // }),
         }).catch(error => console.log("Error is: " + error)
         ).then(solution => {
             return solution.json();
         }).then(solution => {
             let jsonSolution = JSON.parse(solution);
-            if (jsonSolution.length > 0) {
-                this.displaySolution(jsonSolution);
-            }
+            this.displaySolution(jsonSolution);
         });
         return;
     }
@@ -170,8 +165,6 @@ class AppContainer extends Component {
 
     displaySolution = (solution) => {
         if (solution.length === 0) {
-            return;
-        } else if (solution.length === 1) {
             alert("Puzzle has no valid solution.");
             return;
         } else {
