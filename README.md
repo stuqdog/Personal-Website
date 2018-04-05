@@ -19,7 +19,7 @@ The front-end is written in React. The code can be found in the static/src folde
 
 ##### Where can I use it? 
 
-Unfortunately, GitHub web hosting, while excellent and free, does not provide any back-end functionality. You can download the source code yourself and run it in Flask, or stay tuned for an update with live link! If you want to test the algorithm but don't want to deal with getting Flask set up, The solver.py file is sufficient to solve any puzzle if you don't mind manually typing in puzzle details and viewing results in your terminal.
+Unfortunately, GitHub web hosting, while excellent and free, does not (to my knowledge) provide any back-end functionality. You can download the source code yourself and run it in Flask, or stay tuned for an update with live link! If you want to test the algorithm but don't want to deal with getting Flask set up, The solver.py file is sufficient to solve any puzzle if you don't mind manually typing in puzzle details and viewing results in your terminal.
 
 ##### What next? 
 
