@@ -25,8 +25,4 @@ def solve():
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/static', methods=['POST'])
 def index():
-    global clusters
-    clusters = []
-    data = request.get_json()
-    size = int(data["size"]) if data else 6
     return render_template('index.html', title='Home')

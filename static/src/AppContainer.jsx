@@ -1,15 +1,20 @@
 /* General thoughts:
-1) No need to pass anything to Python until we're ready to solve. Keep track of
-size and confirming that we're ready to solve on the js side, and then when
-someone says "Hey, solve the puzzle" then js will check that we're in a position
-to solve. If we are, then we'll pass the data to python.
-2) Related, sorta: Add ways for people to fix clusters that they misassigned.
-How do we want to do this? Maybe have each cell have a pointer to the cluster
-that it belongs to? Hmm. Gotta think about that.
-2a) there's an asymptotically kind of slow way. When we click one that already exists, we
-search clusters and find that cluster, and erase it. It's O(n), where n is the number of currently
-committed cells. But like, (n) will never be bigger than 81 so it's pretty tightly bound.
-3) How do we add clusters? At what point do we add op and total to the array? Maybe as a dict?
+
+1. Currently, clusters are passed to Python as soon as they are filled. This is simpler
+because it means we don't have to find a clean way to store all clusters, but it's probably
+not ideal. When the ability to reassign to clusters is added, it'll be a lot less cumbersome
+if Python doesn't also have to delete clusters. Need to think about the best way to store all
+the clusters and their formulae.
+1a. Thoughts: have cell html somehow contain an indicator for finding clusters. Probably
+through classes. This will likely be faster, but puts logic work into the html which seems
+clunky.
+1b. Asymptotically slow solution, when a cell is clicked just search through all committed
+clusters until that cell is found. It's O(n), where n is the number of currently committed
+cells. But, (n) will never be larger than 81 so there's a pretty tight bound.
+2) Probably best to store clusters as dictionaries within a list, and then send that list to
+Python. That is consistent with how Python reads the data anyway; we'd just send the whole
+thing at once instead of one at a time. Added advantage of eliminating the one global
+variable in routes.py.
 */
 
 
@@ -28,6 +33,8 @@ class AppContainer extends Component {
     }
 
     solvePuzzle = () => {
+        /* Checks to see if all cells have been committed. If they have, sends an update to
+        Python backend to start solving the puzzle. Then, retrieves results from Python. */
         let committedCells = 0;
         let clusters = this.state.clusters;
         for (let i = 0; i < clusters.length; ++i) {
@@ -37,9 +44,6 @@ class AppContainer extends Component {
             alert("Cannot solve a puzzle unless all cells have been declared.");
             return;
         }
-        const jsonPuzzle = clusters.map(cluster => cluster.map(cell => parseInt(cell.id, 10)));
-        const op = document.getElementById("op").value;
-        const total = document.getElementById("num").valueAsNumber;
         fetch('/solver', {
             method: 'POST',
             headers: {
@@ -78,6 +82,8 @@ class AppContainer extends Component {
     }
 
     isLegalOperatorAndTotal = (op, total, clusterArray) =>  {
+        /* Checks that the operator and total submitted obey basic rules, e.g. subtraction
+        and division can only take two cells and equality can only take one cell. */
         if (!op || !total || total < 0) {
             alert("Error. Invalid operator sign or total value.");
             return false;
@@ -99,6 +105,7 @@ class AppContainer extends Component {
     }
 
     updateGrid = (e) => {
+        /* resets the grid size and erases any assigned clusters or cells */
         let clusterCells = this.state.clusterCells;
         let clusters = this.state.clusters;
         for (let i = 0; i < clusters.length; ++i) {
@@ -122,20 +129,12 @@ class AppContainer extends Component {
             clusterCells: new Set(),
             solved: false,
         });
-        fetch('/static', {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json',
-            },
-            body: JSON.stringify({
-                size: e.target.value,
-            }),
-        }).catch(error => console.log("Error is: " + error))
     }
 
 
 
     addToCluster = (cell, y, x) => {
+        /* Adds a selected cell to the current cluster */
         if (cell.classList.contains("committed")) {
             alert("This cell is already committed, sorry!");
             return;
@@ -164,6 +163,8 @@ class AppContainer extends Component {
     }
 
     displaySolution = (solution) => {
+        /* If a legal solution is received from solvePuzzle, updates puzzle to display it.
+        Otherwise, alerts the user that there is no legal solution. */
         if (solution.length === 0) {
             alert("Puzzle has no valid solution.");
             return;
@@ -181,7 +182,8 @@ class AppContainer extends Component {
     }
 
     commitCluster = (e) => {
-        // Let's add some logic in here to confirm that clusters are legal!
+        /* Calls legality checks to confirm the cluster obeys rules. If it does, the cluster
+        data is sent to Python in preparation for puzzle solving. */
         if (!this.isLegalCluster(this.state.clusterCoordinates)) {
             alert("Error. Cluster cells must be connected.");
             return;

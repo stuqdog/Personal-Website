@@ -5,6 +5,9 @@ class Cluster():
 
 class Cell():
     def __init__(self, y, x, cluster, possible, operator, value, actual=None):
+        ''' Tracks cells coordinates, a pointer to the cluster it belongs to,
+        the values it can possibly be, its actual value if known, and the
+        equation details.'''
         self.y = y
         self.x = x
         self.cluster = cluster
@@ -15,12 +18,15 @@ class Cell():
 
 class Solution():
     def __init__(self, size):
+        '''Creates 2d matrix to represent the puzzle, as well as pointers to all
+        cells.'''
         self.size = size
-        self.clusters = []
         self.cells = []
         self.grid = [[0 for i in range(size)] for x in range(size)]
 
     def sort_cells(self):
+        '''Sort cells in increasing order of number of possible ints. This
+        minimizes guesswork upfront, which in turn minimizes recursive calls.'''
         self.cells = sorted(self.cells, key=lambda x: len(x.possible))
 
     def solve(self):
@@ -36,6 +42,9 @@ class Solution():
             return []
 
     def can_be_solved(self, i=0):
+        '''Recursively checks cells in sorted order to see if a viable solution
+        might exist. If all cells have been checked and no violation has
+        been found, then the puzzle is solved.'''
         if i == self.size ** 2: # We've assigned to every cell at this point
             return True         # without any collision, so we're done!
         cell = self.cells[i]
@@ -149,7 +158,6 @@ def solve_puzzle(clusters):
             new_cluster.cells.append(new_cell)
             solution.grid[y][x] = new_cell
             solution.cells.append(new_cell)
-        solution.clusters.append(new_cluster)
     return solution.solve()
 
 
@@ -157,7 +165,6 @@ def main():
 
       # an easy 4x4 puzzle
     puzzle_easy = [
-        16,
         {'cells': [[0, 0]], 'operator': '=', 'value': 3},
         {'cells': [[1, 0], [2, 0]], 'operator': '+', 'value': 3},
         {'cells': [[0, 1], [0, 2]], 'operator': '-', 'value': 3},
@@ -171,7 +178,6 @@ def main():
 
     # a moderately difficult 8x8
     puzzle_medium = [
-        64,
         {'cells': [0, 10], 'operator': '*', 'value': 28},
         {'cells': [1, 2], 'operator': '*', 'value': 15},
         {'cells': [3, 4], 'operator': '-', 'value': 5},
@@ -205,7 +211,6 @@ def main():
 
     # a very difficult 9x9
     puzzle_hard = [
-    81,
     {'cells': [0, 1, 2, 10, 20], 'operator': '+', 'value': 21},
     {'cells': [3, 4, 5, 14], 'operator': '*', 'value': 60},
     {'cells': [6, 7, 8, 18, 28], 'operator': '+', 'value': 25},
