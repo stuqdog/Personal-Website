@@ -101,6 +101,8 @@ class Solution():
                 return (cur_val == value)
             if value % cur_val:
                 return False
+            if value > cur_val * (self.size ** unknown_cells):
+                return False
 
         elif operator == '/':
             if not unknown_cells:
@@ -143,6 +145,7 @@ def solve_puzzle(clusters):
     '''This initializes everything. Creates classes out of the raw data we
     receive, then calls the methods that will actually solve the puzzle.
     '''
+    print(clusters)
     size = sum(len(cluster['cells']) for cluster in clusters)
     size = int(size ** 0.5)
     solution = Solution(size)
@@ -162,17 +165,18 @@ def solve_puzzle(clusters):
 
 
 def main():
-
+    '''Provides sample test puzzles. Cell values are coordinates: the 10s digit
+    represents the Y coordinate, and the 1s digit represents the X coordinate.'''
       # an easy 4x4 puzzle
     puzzle_easy = [
-        {'cells': [[0, 0]], 'operator': '=', 'value': 3},
-        {'cells': [[1, 0], [2, 0]], 'operator': '+', 'value': 3},
-        {'cells': [[0, 1], [0, 2]], 'operator': '-', 'value': 3},
-        {'cells': [[0, 3], [1, 3]], 'operator': '/', 'value': 2},
-        {'cells': [[1, 1], [1, 2], [2, 1]], 'operator': '*', 'value': 12},
-        {'cells': [[2, 2], [2, 3]], 'operator': '-', 'value': 1},
-        {'cells': [[3, 3]], 'operator': '=', 'value': 1},
-        {'cells': [[3, 0], [3, 1], [3, 2]], 'operator': '*', 'value': 24},
+        {'cells': [0], 'operator': '=', 'value': 3},
+        {'cells': [10, 20], 'operator': '+', 'value': 3},
+        {'cells': [1, 2], 'operator': '-', 'value': 3},
+        {'cells': [3, 13], 'operator': '/', 'value': 2},
+        {'cells': [11, 12, 21], 'operator': '*', 'value': 12},
+        {'cells': [22, 23], 'operator': '-', 'value': 1},
+        {'cells': [33], 'operator': '=', 'value': 1},
+        {'cells': [30, 31, 32], 'operator': '*', 'value': 24},
     ]
 
 
@@ -207,6 +211,24 @@ def main():
         {'cells': [74, 64, 65], 'operator': '*', 'value': 56},
         {'cells': [56, 66, 67], 'operator': '+', 'value': 18},
         {'cells': [75, 76, 77], 'operator': '+', 'value': 15}
+    ]
+
+    problem = [
+    {'cells': [0, 1], 'operator': '/', 'value': 3},
+    {'cells': [2, 12], 'operator': '/', 'value': 3},
+    {'cells': [3, 13, 14], 'operator': '*', 'value': 12},
+    {'cells': [4, 5], 'operator': '-', 'value': 1},
+    {'cells': [10, 20], 'operator': '/', 'value': 2},
+    {'cells': [11, 21], 'operator': '-', 'value': 1},
+    {'cells': [15, 24, 25], 'operator': '+', 'value': 6},
+    {'cells': [22, 23, 32, 33], 'operator': '*', 'value': 360},
+    {'cells': [30, 31, 40], 'operator': '*', 'value': 12},
+    {'cells': [34, 35], 'operator': '-', 'value': 1},
+    {'cells': [41, 42, 50, 51], 'operator': '+', 'value': 17},
+    {'cells': [43, 44], 'operator': '/', 'value': 2},
+    {'cells': [45, 55], 'operator': '/', 'value': 2},
+    {'cells': [52], 'operator': '=', 'value': 1},
+    {'cells': [53, 54], 'operator': '-', 'value': 2},
     ]
 
     # a very difficult 9x9
@@ -248,7 +270,8 @@ def main():
 
     # solve_puzzle(puzzle_easy)
     # solve_puzzle(puzzle_medium)
-    solve_puzzle(puzzle_hard)
+    solve_puzzle(problem)
+    # solve_puzzle(puzzle_hard)
 
 if __name__ == "__main__":
     main()
